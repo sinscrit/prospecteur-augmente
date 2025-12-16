@@ -427,11 +427,11 @@ const SlideOutPanel = ({ isOpen, onClose, property, onSave, connectivity, addToa
         
         <div className="flex items-center gap-3 mt-3">
           <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold" style={{ backgroundColor: status.bg, color: status.color }}>
-            {status.icon} {status.label}
+            {status.icon} {t(status.i18nKey)}
           </span>
           <span className="text-white/80 text-sm flex items-center gap-1">
             {typeConfig && <typeConfig.icon size={14} />}
-            {typeConfig?.labelFr}
+            {typeConfig && t(typeConfig.i18nKey)}
           </span>
           <span className="text-white/80 text-sm">{property.surface}m²</span>
         </div>
@@ -490,8 +490,8 @@ const SlideOutPanel = ({ isOpen, onClose, property, onSave, connectivity, addToa
                 <div>
                   <label className="text-xs text-gray-500 block mb-1">{t('panel.details.type')}</label>
                   <select className="w-full px-3 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
-                    {PROPERTY_TYPES.map(t => (
-                      <option key={t.id} value={t.id} selected={t.id === property.type}>{t(t.i18nKey)}</option>
+                    {PROPERTY_TYPES.map(type => (
+                      <option key={type.id} value={type.id} selected={type.id === property.type}>{t(type.i18nKey)}</option>
                     ))}
                   </select>
                 </div>
@@ -1219,6 +1219,7 @@ const ProspecteurAugmenteV2 = () => {
             properties={filteredProperties}
             selectedId={selectedPropertyId}
             onSelectProperty={handleSelectProperty}
+            onCloseInfoWindow={() => setSelectedPropertyId(null)}
             route={route}
           />
         </div>

@@ -20,9 +20,9 @@ const STATUS_CONFIG = {
   'desactive-contact_not_ok': { icon: '✋', color: '#EF4444', bg: '#FEE2E2', label: 'Contact refusé' }
 };
 
-const MapComponent = ({ properties, selectedId, onSelectProperty, route }) => {
+const MapComponent = ({ properties, selectedId, onSelectProperty, onCloseInfoWindow, route }) => {
   const [hoveredId, setHoveredId] = useState(null);
-  
+
   // Center on Brussels
   const defaultCenter = { lat: 50.8466, lng: 4.3528 };
 
@@ -60,19 +60,23 @@ const MapComponent = ({ properties, selectedId, onSelectProperty, route }) => {
                  onMouseLeave={() => setHoveredId(null)}
                  zIndex={isSelected ? 100 : 1}
                >
-                 <div className="relative">
-                    <Pin
-                        background={status.color}
-                        borderColor={isSelected ? '#000000' : '#ffffff'}
-                        glyphColor={'#ffffff'}
-                        scale={isSelected ? 1.2 : 1.0}
-                    />
+                  <div className={`
+                    rounded-full shadow-lg flex items-center justify-center border-2 transition-all duration-300
+                    ${isSelected ? 'w-10 h-10 border-black z-50' : 'w-8 h-8 border-white hover:scale-110'}
+                  `}
+                  style={{ backgroundColor: status.color }}
+                  >
+                    {(() => {
+                      const TypeIcon = PROPERTY_TYPES.find(t => t.id === prop.type)?.icon || Building2;
+                      return <TypeIcon size={isSelected ? 20 : 16} className="text-white" />;
+                    })()}
+                    
                     {routeIndex !== undefined && routeIndex >= 0 && (
                         <div className="absolute -top-2 -right-2 w-5 h-5 rounded-full flex items-center justify-center text-xs font-bold text-white bg-blue-900 border border-white z-50">
                             {routeIndex + 1}
                         </div>
                     )}
-                 </div>
+                  </div>
                </AdvancedMarker>
              );
           })}
@@ -85,7 +89,7 @@ const MapComponent = ({ properties, selectedId, onSelectProperty, route }) => {
             return (
               <InfoWindow
                 position={{ lat: prop.address.lat, lng: prop.address.lng }}
-                onCloseClick={() => onSelectProperty(null)}
+                onCloseClick={() => onCloseInfoWindow ? onCloseInfoWindow() : onSelectProperty(null)}
                 headerContent={<div className="font-bold text-sm">{prop.address.street} {prop.address.number}</div>}
               >
                 <div className="p-1 min-w-[200px]">
