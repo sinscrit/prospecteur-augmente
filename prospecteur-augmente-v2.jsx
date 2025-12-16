@@ -1,5 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { MapPin, Wifi, WifiOff, RefreshCw, Check, Clock, AlertTriangle, XCircle, ChevronLeft, ChevronRight, X, FileText, Image, Layers, User, Settings, Plus, Trash2, Upload, Star, GripVertical, Sparkles, Globe, Home, List, Map, Filter, RotateCcw, Navigation, Eye, Edit3, Save, Send, Menu, Search, ChevronDown, Phone, Mail, Building2, Package, ShoppingBag, Warehouse, Trees, Camera, MoreVertical, Zap, Cloud, CloudOff, CheckCircle2, Info, Bell } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
+import MapComponent from './src/components/Map';
 
 // ==================== DESIGN TOKENS ====================
 const colors = {
@@ -44,21 +46,21 @@ const colors = {
 const BRUSSELS_COMMUNES = ['Anderlecht', 'Auderghem', 'Berchem-Sainte-Agathe', 'Bruxelles', 'Etterbeek', 'Evere', 'Forest', 'Ganshoren', 'Ixelles', 'Jette', 'Koekelberg', 'Molenbeek-Saint-Jean', 'Saint-Gilles', 'Saint-Josse-ten-Noode', 'Schaerbeek', 'Uccle', 'Watermael-Boitsfort', 'Woluwe-Saint-Lambert', 'Woluwe-Saint-Pierre'];
 
 const PROPERTY_TYPES = [
-  { id: 'bureau', labelFr: 'Bureau', abbr: 'BUR', icon: Building2 },
-  { id: 'entrepot', labelFr: 'Entrepôt', abbr: 'ENT', icon: Warehouse },
-  { id: 'commerce', labelFr: 'Commerce', abbr: 'COM', icon: ShoppingBag },
-  { id: 'terrain', labelFr: 'Terrain', abbr: 'TER', icon: Trees },
-  { id: 'atelier', labelFr: 'Atelier', abbr: 'ATE', icon: Package }
+  { id: 'bureau', i18nKey: 'types.bureau', abbr: 'BUR', icon: Building2 },
+  { id: 'entrepot', i18nKey: 'types.entrepot', abbr: 'ENT', icon: Warehouse },
+  { id: 'commerce', i18nKey: 'types.commerce', abbr: 'COM', icon: ShoppingBag },
+  { id: 'terrain', i18nKey: 'types.terrain', abbr: 'TER', icon: Trees },
+  { id: 'atelier', i18nKey: 'types.atelier', abbr: 'ATE', icon: Package }
 ];
 
 const STATUS_CONFIG = {
-  'complet-bien_ok': { icon: '😊', color: colors.success, bg: colors.successLight, label: 'Complet' },
-  'complet-a_reviser_1m': { icon: '😐', color: colors.warning, bg: colors.warningLight, label: 'À réviser' },
-  'complet-a_reviser_2m': { icon: '😠', color: '#F97316', bg: '#FED7AA', label: 'À réviser (2m)' },
-  'incomplet-a_contacter': { icon: '📞', color: colors.info, bg: colors.infoLight, label: 'À contacter' },
-  'incomplet-en_suspens': { icon: '💔', color: colors.gray500, bg: colors.gray100, label: 'En suspens' },
-  'desactive-loue_vendu': { icon: '👎', color: colors.error, bg: colors.errorLight, label: 'Loué/Vendu' },
-  'desactive-contact_not_ok': { icon: '✋', color: colors.error, bg: colors.errorLight, label: 'Contact refusé' }
+  'complet-bien_ok': { icon: '😊', color: colors.success, bg: colors.successLight, i18nKey: 'status.complet' },
+  'complet-a_reviser_1m': { icon: '😐', color: colors.warning, bg: colors.warningLight, i18nKey: 'status.to_revise' },
+  'complet-a_reviser_2m': { icon: '😠', color: '#F97316', bg: '#FED7AA', i18nKey: 'status.to_revise_2m' },
+  'incomplet-a_contacter': { icon: '📞', color: colors.info, bg: colors.infoLight, i18nKey: 'status.to_contact' },
+  'incomplet-en_suspens': { icon: '💔', color: colors.gray500, bg: colors.gray100, i18nKey: 'status.suspended' },
+  'desactive-loue_vendu': { icon: '👎', color: colors.error, bg: colors.errorLight, i18nKey: 'status.rented_sold' },
+  'desactive-contact_not_ok': { icon: '✋', color: colors.error, bg: colors.errorLight, i18nKey: 'status.contact_refused' }
 };
 
 const MOCK_PROPERTIES = [
@@ -167,21 +169,25 @@ const ToastContainer = ({ toasts, onDismiss }) => (
 );
 
 // ==================== HEADER COMPONENTS ====================
-const ConnectionStatus = ({ isOnline }) => (
-  <div className={`flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-semibold ${
-    isOnline ? 'bg-green-500 text-white' : 'bg-gray-200 text-gray-600'
-  }`}>
-    {isOnline ? <Wifi size={14} /> : <WifiOff size={14} />}
-    {isOnline ? 'ONLINE' : 'OFFLINE'}
-  </div>
-);
+const ConnectionStatus = ({ isOnline }) => {
+  const { t } = useTranslation();
+  return (
+    <div className={`flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-semibold ${
+      isOnline ? 'bg-green-500 text-white' : 'bg-gray-200 text-gray-600'
+    }`}>
+      {isOnline ? <Wifi size={14} /> : <WifiOff size={14} />}
+      {isOnline ? t('common.online') : t('common.offline')}
+    </div>
+  );
+};
 
 const SyncStatus = ({ status, pendingCount, onClick }) => {
+  const { t } = useTranslation();
   const configs = {
-    synced: { icon: Cloud, text: 'Synced', color: 'text-green-600', bg: 'bg-green-50' },
-    syncing: { icon: RefreshCw, text: 'Syncing...', color: 'text-blue-600', bg: 'bg-blue-50', animate: true },
-    pending: { icon: Clock, text: `${pendingCount} pending`, color: 'text-amber-600', bg: 'bg-amber-50' },
-    error: { icon: CloudOff, text: 'Sync error', color: 'text-red-600', bg: 'bg-red-50' }
+    synced: { icon: Cloud, text: t('common.synced'), color: 'text-green-600', bg: 'bg-green-50' },
+    syncing: { icon: RefreshCw, text: t('common.syncing'), color: 'text-blue-600', bg: 'bg-blue-50', animate: true },
+    pending: { icon: Clock, text: t('common.pending', { count: pendingCount }), color: 'text-amber-600', bg: 'bg-amber-50' },
+    error: { icon: CloudOff, text: t('common.sync_error'), color: 'text-red-600', bg: 'bg-red-50' }
   };
   const config = configs[status];
   const Icon = config.icon;
@@ -342,6 +348,7 @@ const MapView = ({ properties, selectedId, onSelectProperty, route }) => {
 
 // ==================== SLIDE-OUT PANEL ====================
 const SlideOutPanel = ({ isOpen, onClose, property, onSave, connectivity, addToast }) => {
+  const { t } = useTranslation();
   const [activeTab, setActiveTab] = useState('info');
   const [isDirty, setIsDirty] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
@@ -366,27 +373,27 @@ const SlideOutPanel = ({ isOpen, onClose, property, onSave, connectivity, addToa
     setIsDirty(false);
     addToast({
       type: connectivity.isOnline ? 'success' : 'info',
-      title: connectivity.isOnline ? 'Modifications enregistrées' : 'Sauvegardé localement',
-      message: connectivity.isOnline ? 'Synchronisation réussie' : 'Sera synchronisé une fois en ligne'
+      title: connectivity.isOnline ? t('toasts.saved_online') : t('toasts.saved_local'),
+      message: connectivity.isOnline ? t('toasts.synced_success') : t('toasts.sync_pending')
     });
   };
 
   const handleAIGenerate = async () => {
     setAiStatus('generating');
-    addToast({ type: 'ai', title: 'Génération IA en cours', message: 'Création de la description...' });
+    addToast({ type: 'ai', title: t('toasts.ai_generating'), message: t('toasts.ai_creating') });
     await new Promise(r => setTimeout(r, 2500));
     setDescriptions({ ...MOCK_AI_RESPONSE, isGenerated: true });
     setAiStatus('complete');
     setIsDirty(true);
-    addToast({ type: 'ai', title: 'Description générée !', message: 'FR & NL créées avec succès' });
+    addToast({ type: 'ai', title: t('toasts.ai_success'), message: t('toasts.ai_created') });
   };
 
   const handlePhotoUpload = async () => {
-    addToast({ type: 'info', title: 'Photo détectée', message: autoRotate ? 'Auto-rotation appliquée â†»' : 'Traitement en cours...' });
+    addToast({ type: 'info', title: t('toasts.photo_detected'), message: autoRotate ? t('toasts.photo_rotating') : t('toasts.photo_processing') });
     await new Promise(r => setTimeout(r, 1500));
     setPhotos([...photos, { id: `p-${Date.now()}`, ordre: photos.length + 1, isPrincipal: photos.length === 0 }]);
     setIsDirty(true);
-    addToast({ type: 'success', title: 'Photo ajoutée', message: 'Glissez pour réorganiser' });
+    addToast({ type: 'success', title: t('toasts.photo_added'), message: t('toasts.photo_reorder') });
   };
 
   if (!property) return null;
@@ -432,7 +439,7 @@ const SlideOutPanel = ({ isOpen, onClose, property, onSave, connectivity, addToa
         {/* Completeness bar */}
         <div className="mt-4">
           <div className="flex justify-between text-xs text-white/70 mb-1">
-            <span>Complétude</span>
+            <span>{t('common.completeness')}</span>
             <span>{completeness}%</span>
           </div>
           <div className="h-1.5 bg-white/20 rounded-full overflow-hidden">
@@ -450,9 +457,9 @@ const SlideOutPanel = ({ isOpen, onClose, property, onSave, connectivity, addToa
       {/* Tabs */}
       <div className="flex border-b border-gray-200 px-4">
         {[
-          { id: 'info', label: 'Informations', icon: FileText },
-          { id: 'photos', label: 'Photos', icon: Camera },
-          { id: 'contact', label: 'Contact', icon: User }
+          { id: 'info', label: t('panel.tabs.info'), icon: FileText },
+          { id: 'photos', label: t('panel.tabs.photos'), icon: Camera },
+          { id: 'contact', label: t('panel.tabs.contact'), icon: User }
         ].map(tab => {
           const Icon = tab.icon;
           return (
@@ -478,21 +485,21 @@ const SlideOutPanel = ({ isOpen, onClose, property, onSave, connectivity, addToa
           <div className="space-y-6">
             {/* Basic Info */}
             <div className="space-y-4">
-              <h3 className="text-sm font-semibold text-gray-800 uppercase tracking-wide">Détails du bien</h3>
+              <h3 className="text-sm font-semibold text-gray-800 uppercase tracking-wide">{t('panel.details.title')}</h3>
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="text-xs text-gray-500 block mb-1">Type</label>
+                  <label className="text-xs text-gray-500 block mb-1">{t('panel.details.type')}</label>
                   <select className="w-full px-3 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
                     {PROPERTY_TYPES.map(t => (
-                      <option key={t.id} value={t.id} selected={t.id === property.type}>{t.labelFr}</option>
+                      <option key={t.id} value={t.id} selected={t.id === property.type}>{t(t.i18nKey)}</option>
                     ))}
                   </select>
                 </div>
                 <div>
-                  <label className="text-xs text-gray-500 block mb-1">Transaction</label>
+                  <label className="text-xs text-gray-500 block mb-1">{t('panel.details.transaction')}</label>
                   <select className="w-full px-3 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
-                    <option value="location">Location</option>
-                    <option value="vente">Vente</option>
+                    <option value="location">{t('panel.details.location')}</option>
+                    <option value="vente">{t('panel.details.sale')}</option>
                   </select>
                 </div>
                 <div>
@@ -518,7 +525,7 @@ const SlideOutPanel = ({ isOpen, onClose, property, onSave, connectivity, addToa
 
             {/* Characteristics */}
             <div className="space-y-3">
-              <h3 className="text-sm font-semibold text-gray-800 uppercase tracking-wide">Caractéristiques</h3>
+              <h3 className="text-sm font-semibold text-gray-800 uppercase tracking-wide">{t('panel.characteristics.title')}</h3>
               <div className="flex flex-wrap gap-2">
                 {['Parking', 'Quai', 'Bureaux', 'WC', 'Chauffage', 'Accès PMR'].map(item => (
                   <label key={item} className="cursor-pointer">
@@ -531,16 +538,16 @@ const SlideOutPanel = ({ isOpen, onClose, property, onSave, connectivity, addToa
               </div>
             </div>
 
-            {/* AI Description Section - Distinctive indigo styling */}
+            {/* AI Description Section */}
             <div className="rounded-2xl overflow-hidden" style={{ backgroundColor: colors.aiLight }}>
               <div className="px-4 py-3 flex items-center justify-between" style={{ backgroundColor: colors.aiMedium }}>
                 <div className="flex items-center gap-2">
                   <Sparkles size={18} style={{ color: colors.ai }} />
-                  <span className="font-semibold text-sm" style={{ color: colors.ai }}>Description IA</span>
+                  <span className="font-semibold text-sm" style={{ color: colors.ai }}>{t('panel.ai.title')}</span>
                 </div>
                 {aiStatus === 'complete' && (
                   <span className="text-xs px-2 py-0.5 rounded-full bg-white/60" style={{ color: colors.ai }}>
-                    âœ“ Générée
+                    {t('panel.ai.generated')}
                   </span>
                 )}
               </div>
@@ -553,7 +560,7 @@ const SlideOutPanel = ({ isOpen, onClose, property, onSave, connectivity, addToa
                     style={{ backgroundColor: colors.ai }}
                   >
                     <Sparkles size={18} />
-                    Générer avec l'IA
+                    {t('panel.ai.generate_btn')}
                   </button>
                 )}
 
@@ -567,7 +574,7 @@ const SlideOutPanel = ({ isOpen, onClose, property, onSave, connectivity, addToa
                 {(aiStatus === 'complete' || descriptions.fr) && (
                   <div className="space-y-3">
                     <div>
-                      <label className="text-xs font-medium text-indigo-700 mb-1 block">Français</label>
+                      <label className="text-xs font-medium text-indigo-700 mb-1 block">{t('panel.ai.fr_label')}</label>
                       <textarea
                         value={descriptions.fr}
                         onChange={(e) => { setDescriptions({...descriptions, fr: e.target.value}); setIsDirty(true); }}
@@ -576,7 +583,7 @@ const SlideOutPanel = ({ isOpen, onClose, property, onSave, connectivity, addToa
                       />
                     </div>
                     <div>
-                      <label className="text-xs font-medium text-indigo-700 mb-1 block">Nederlands</label>
+                      <label className="text-xs font-medium text-indigo-700 mb-1 block">{t('panel.ai.nl_label')}</label>
                       <textarea
                         value={descriptions.nl}
                         onChange={(e) => { setDescriptions({...descriptions, nl: e.target.value}); setIsDirty(true); }}
@@ -597,7 +604,7 @@ const SlideOutPanel = ({ isOpen, onClose, property, onSave, connectivity, addToa
             <div className="flex items-center justify-between p-3 bg-gray-50 rounded-xl">
               <div className="flex items-center gap-2">
                 <RotateCcw size={18} className="text-gray-500" />
-                <span className="text-sm font-medium text-gray-700">Auto-rotate</span>
+                <span className="text-sm font-medium text-gray-700">{t('panel.photos.auto_rotate')}</span>
               </div>
               <button
                 onClick={() => setAutoRotate(!autoRotate)}
@@ -616,9 +623,9 @@ const SlideOutPanel = ({ isOpen, onClose, property, onSave, connectivity, addToa
                 <Upload size={24} className="text-gray-400" />
               </div>
               <p className="text-sm text-gray-600">
-                <span className="font-medium text-blue-600">Cliquez pour ajouter</span> ou glissez-déposez
+                <span className="font-medium text-blue-600">{t('panel.photos.click_add')}</span> {t('panel.photos.drag_drop')}
               </p>
-              <p className="text-xs text-gray-400 mt-1">PNG, JPG jusqu'à 10MB</p>
+              <p className="text-xs text-gray-400 mt-1">{t('panel.photos.format_info')}</p>
             </div>
 
             {/* Photo grid */}
@@ -673,9 +680,9 @@ const SlideOutPanel = ({ isOpen, onClose, property, onSave, connectivity, addToa
                     </div>
                   </div>
                 </div>
-                <div className="space-y-3">
+                  <div className="space-y-3">
                   <div>
-                    <label className="text-xs text-gray-500 block mb-1">Nom</label>
+                    <label className="text-xs text-gray-500 block mb-1">{t('panel.contact.name')}</label>
                     <input 
                       type="text" 
                       defaultValue={property.contact.name}
@@ -683,7 +690,7 @@ const SlideOutPanel = ({ isOpen, onClose, property, onSave, connectivity, addToa
                     />
                   </div>
                   <div>
-                    <label className="text-xs text-gray-500 block mb-1">Téléphone</label>
+                    <label className="text-xs text-gray-500 block mb-1">{t('panel.contact.phone')}</label>
                     <input 
                       type="tel" 
                       defaultValue={property.contact.phone}
@@ -697,9 +704,9 @@ const SlideOutPanel = ({ isOpen, onClose, property, onSave, connectivity, addToa
                 <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-gray-100 flex items-center justify-center">
                   <User size={32} className="text-gray-300" />
                 </div>
-                <p className="text-gray-500 mb-4">Aucun contact associé</p>
+                <p className="text-gray-500 mb-4">{t('panel.contact.no_contact')}</p>
                 <button className="px-4 py-2 bg-blue-600 text-white rounded-xl text-sm font-medium hover:bg-blue-700 transition-colors">
-                  + Ajouter un contact
+                  {t('panel.contact.add_btn')}
                 </button>
               </div>
             )}
@@ -723,12 +730,12 @@ const SlideOutPanel = ({ isOpen, onClose, property, onSave, connectivity, addToa
             {isSaving ? (
               <>
                 <RefreshCw size={18} className="animate-spin" />
-                Enregistrement...
+                {t('common.saving')}
               </>
             ) : (
               <>
                 <Save size={18} />
-                Enregistrer
+                {t('common.save')}
               </>
             )}
           </button>
@@ -741,7 +748,7 @@ const SlideOutPanel = ({ isOpen, onClose, property, onSave, connectivity, addToa
             }`}
           >
             <Send size={18} />
-            Publier
+            {t('common.publish')}
           </button>
         </div>
       </div>
@@ -751,6 +758,7 @@ const SlideOutPanel = ({ isOpen, onClose, property, onSave, connectivity, addToa
 
 // ==================== FILTER BAR ====================
 const FilterBar = ({ filters, onChange, propertyCount }) => {
+  const { t } = useTranslation();
   const [isExpanded, setIsExpanded] = useState(false);
 
   return (
@@ -758,7 +766,7 @@ const FilterBar = ({ filters, onChange, propertyCount }) => {
       <div className="px-4 py-3 flex items-center justify-between">
         <div className="flex items-center gap-3">
           <Filter size={18} className="text-gray-500" />
-          <span className="font-medium text-gray-800">Filtres</span>
+          <span className="font-medium text-gray-800">{t('filters.title')}</span>
           {(filters.types.length > 0 || filters.statuses.length > 0) && (
             <span className="px-2 py-0.5 bg-blue-100 text-blue-700 text-xs font-bold rounded-full">
               {filters.types.length + filters.statuses.length}
@@ -766,7 +774,7 @@ const FilterBar = ({ filters, onChange, propertyCount }) => {
           )}
         </div>
         <div className="flex items-center gap-3">
-          <span className="text-sm text-gray-500">{propertyCount} biens</span>
+          <span className="text-sm text-gray-500">{t('filters.properties_count', { count: propertyCount })}</span>
           <button 
             onClick={() => setIsExpanded(!isExpanded)}
             className="p-1 hover:bg-gray-100 rounded-lg transition-colors"
@@ -779,7 +787,7 @@ const FilterBar = ({ filters, onChange, propertyCount }) => {
       {isExpanded && (
         <div className="px-4 py-4 border-t border-gray-100 space-y-4">
           <div>
-            <label className="text-xs font-medium text-gray-600 block mb-2">Type de bien</label>
+            <label className="text-xs font-medium text-gray-600 block mb-2">{t('filters.property_type')}</label>
             <div className="flex flex-wrap gap-2">
               {PROPERTY_TYPES.map(type => {
                 const Icon = type.icon;
@@ -801,7 +809,7 @@ const FilterBar = ({ filters, onChange, propertyCount }) => {
                     style={{ backgroundColor: isActive ? colors.primary : undefined }}
                   >
                     <Icon size={14} />
-                    {type.labelFr}
+                    {t(type.i18nKey)}
                   </button>
                 );
               })}
@@ -809,7 +817,7 @@ const FilterBar = ({ filters, onChange, propertyCount }) => {
           </div>
 
           <div>
-            <label className="text-xs font-medium text-gray-600 block mb-2">Statut</label>
+            <label className="text-xs font-medium text-gray-600 block mb-2">{t('filters.status')}</label>
             <div className="flex flex-wrap gap-2">
               {Object.entries(STATUS_CONFIG).slice(0, 5).map(([key, config]) => (
                 <button
@@ -829,7 +837,7 @@ const FilterBar = ({ filters, onChange, propertyCount }) => {
                     ringColor: filters.statuses.includes(key) ? config.color : undefined
                   }}
                 >
-                  {config.icon} {config.label}
+                  {config.icon} {t(config.i18nKey)}
                 </button>
               ))}
             </div>
@@ -841,7 +849,7 @@ const FilterBar = ({ filters, onChange, propertyCount }) => {
               className="text-sm text-gray-500 hover:text-gray-700 flex items-center gap-1"
             >
               <RotateCcw size={14} />
-              Réinitialiser
+              {t('filters.reset')}
             </button>
           )}
         </div>
@@ -851,35 +859,37 @@ const FilterBar = ({ filters, onChange, propertyCount }) => {
 };
 
 // ==================== ROUTE PANEL ====================
-const RoutePanel = ({ route, onClear, onGenerate, isGenerating, canGenerate }) => (
-  <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-4">
-    {!route ? (
-      <button
-        onClick={onGenerate}
-        disabled={!canGenerate || isGenerating}
-        className={`w-full py-3 rounded-xl font-semibold transition-all flex items-center justify-center gap-2 ${
-          canGenerate && !isGenerating
-            ? 'text-white hover:opacity-90'
-            : 'bg-gray-200 text-gray-400 cursor-not-allowed'
-        }`}
-        style={{ backgroundColor: canGenerate && !isGenerating ? colors.primary : undefined }}
-      >
-        {isGenerating ? (
-          <>
-            <RefreshCw size={18} className="animate-spin" />
-            Calcul en cours...
-          </>
-        ) : (
-          <>
-            <Navigation size={18} />
-            Générer Itinéraire
-          </>
-        )}
-      </button>
-    ) : (
+const RoutePanel = ({ route, onClear, generateRoute, isOptimizing }) => {
+  const { t } = useTranslation();
+  return (
+    <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-4">
+      <div className="flex items-center gap-2 mb-3">
+        <Navigation size={18} className="text-gray-500" />
+        <h3 className="font-semibold text-gray-800">{t('route.title')}</h3>
+      </div>
+      
+      {!route ? (
+        <button 
+          onClick={generateRoute}
+          disabled={isOptimizing}
+          className="w-full py-2.5 bg-blue-600 text-white rounded-xl text-sm font-medium hover:bg-blue-700 transition-colors flex items-center justify-center gap-2"
+        >
+          {isOptimizing ? (
+            <>
+              <RefreshCw size={16} className="animate-spin" />
+              {t('route.calculating')}
+            </>
+          ) : (
+            <>
+              <Sparkles size={16} />
+              {t('route.generate_btn')}
+            </>
+          )}
+        </button>
+      ) : (
       <div className="space-y-3">
         <div className="flex items-center justify-between">
-          <h3 className="font-semibold text-gray-800">Itinéraire</h3>
+          <h3 className="font-semibold text-gray-800">{t('route.title')}</h3>
           <button onClick={onClear} className="text-gray-400 hover:text-gray-600">
             <X size={18} />
           </button>
@@ -887,15 +897,15 @@ const RoutePanel = ({ route, onClear, onGenerate, isGenerating, canGenerate }) =
         <div className="grid grid-cols-3 gap-3 text-center">
           <div className="p-2 bg-gray-50 rounded-xl">
             <p className="text-xl font-bold" style={{ color: colors.primary }}>{route.length}</p>
-            <p className="text-xs text-gray-500">étapes</p>
+            <p className="text-xs text-gray-500">{t('route.steps')}</p>
           </div>
           <div className="p-2 bg-gray-50 rounded-xl">
             <p className="text-xl font-bold" style={{ color: colors.primary }}>{(route.length * 1.2).toFixed(1)}</p>
-            <p className="text-xs text-gray-500">km</p>
+            <p className="text-xs text-gray-500">{t('route.km')}</p>
           </div>
           <div className="p-2 bg-gray-50 rounded-xl">
             <p className="text-xl font-bold" style={{ color: colors.primary }}>{route.length * 8}</p>
-            <p className="text-xs text-gray-500">min</p>
+            <p className="text-xs text-gray-500">{t('route.min')}</p>
           </div>
         </div>
         <div className="space-y-1.5">
@@ -908,225 +918,101 @@ const RoutePanel = ({ route, onClear, onGenerate, isGenerating, canGenerate }) =
             </div>
           ))}
         </div>
+        <button 
+            onClick={generateRoute}
+            className="w-full py-2 bg-gray-100 text-gray-600 rounded-lg text-xs font-medium hover:bg-gray-200 transition-colors"
+          >
+            {t('route.optimize_btn')}
+          </button>
       </div>
     )}
   </div>
-);
+  );
+};
 
 // ==================== IMPORT MODAL ====================
 const ImportModal = ({ isOpen, onClose, onImport }) => {
-  const [importText, setImportText] = useState('');
-  const [error, setError] = useState(null);
-
+  const { t } = useTranslation();
+  const [step, setStep] = useState(0); // 0: upload, 1: mapping, 2: processing
+  
   if (!isOpen) return null;
 
-  const validateProperty = (prop, index) => {
-    const errors = [];
-    if (!prop.id) errors.push(`Property ${index + 1}: missing 'id'`);
-    if (!prop.statusKey) errors.push(`Property ${index + 1}: missing 'statusKey'`);
-    if (!prop.address || !prop.address.full) errors.push(`Property ${index + 1}: missing 'address.full'`);
-    if (!prop.type) errors.push(`Property ${index + 1}: missing 'type'`);
-    return errors;
-  };
-
-  const parseJavaScriptData = (text) => {
-    let cleanText = text;
-    
-    // Try to find the MOCK_PROPERTIES array
-    const mockPropsIndex = cleanText.indexOf('MOCK_PROPERTIES');
-    if (mockPropsIndex !== -1) {
-      const startBracket = cleanText.indexOf('[', mockPropsIndex);
-      if (startBracket !== -1) {
-        let depth = 0;
-        let endBracket = -1;
-        for (let i = startBracket; i < cleanText.length; i++) {
-          if (cleanText[i] === '[') depth++;
-          if (cleanText[i] === ']') depth--;
-          if (depth === 0) {
-            endBracket = i;
-            break;
-          }
-        }
-        if (endBracket !== -1) {
-          cleanText = cleanText.substring(startBracket, endBracket + 1);
-        }
-      }
-    }
-    
-    // Convert new Date(...) to string
-    cleanText = cleanText.replace(/new Date\(['"]([\d\-]+)['"]\)/g, '"$1"');
-    cleanText = cleanText.replace(/new Date\(\)/g, '"2024-01-01"');
-    
-    // Remove trailing commas
-    cleanText = cleanText.replace(/,(\s*[\]}])/g, '$1');
-    
-    // Try to parse - if it fails, try with quote conversion
-    try {
-      return JSON.parse(cleanText);
-    } catch (e) {
-      // Convert single quotes to double quotes
-      cleanText = cleanText.replace(/'/g, '"');
-      return JSON.parse(cleanText);
-    }
-  };
-
-  const handleImport = () => {
-    setError(null);
-    
-    if (!importText.trim()) {
-      setError('Veuillez coller des données');
-      return;
-    }
-
-    try {
-      // Try JavaScript format first, then fall back to pure JSON
-      let parsed;
-      try {
-        parsed = parseJavaScriptData(importText);
-      } catch (jsError) {
-        // Try pure JSON as fallback
-        try {
-          parsed = JSON.parse(importText);
-        } catch (jsonError) {
-          throw new Error(`Impossible de parser les données.\nEssayez de coller uniquement le tableau MOCK_PROPERTIES.\n\nDétails: ${jsError.message}`);
-        }
-      }
-      
-      // Check if it's an array
-      if (!Array.isArray(parsed)) {
-        setError('Les données doivent être un tableau de propriétés');
-        return;
-      }
-
-      if (parsed.length === 0) {
-        setError('Le tableau ne peut pas être vide');
-        return;
-      }
-
-      // Validate each property
-      const allErrors = [];
-      parsed.forEach((prop, index) => {
-        const propErrors = validateProperty(prop, index);
-        allErrors.push(...propErrors);
-      });
-
-      if (allErrors.length > 0) {
-        setError(`Erreurs de validation:\n${allErrors.slice(0, 5).join('\n')}${allErrors.length > 5 ? `\n... et ${allErrors.length - 5} autres` : ''}`);
-        return;
-      }
-
-      // Convert date strings to Date objects if needed
-      const processedData = parsed.map(prop => ({
-        ...prop,
-        lastModifiedAt: prop.lastModifiedAt ? new Date(prop.lastModifiedAt) : new Date(),
-        lastValidatedAt: prop.lastValidatedAt ? new Date(prop.lastValidatedAt) : null
-      }));
-
-      onImport(processedData);
-      setImportText('');
-      setError(null);
-      onClose();
-    } catch (e) {
-      setError(e.message);
-    }
-  };
-
-  const handleClose = () => {
-    setImportText('');
-    setError(null);
-    onClose();
+  const handleImport = async () => {
+    setStep(2);
+    await new Promise(r => setTimeout(r, 2000));
+    // Simulate import
+    onImport(MOCK_PROPERTIES); // Using existing mock data for demo
+    setStep(0);
   };
 
   return (
-    <>
-      {/* Backdrop */}
-      <div 
-        className="fixed inset-0 bg-black/50 z-50"
-        onClick={handleClose}
-      />
-      
-      {/* Modal */}
-      <div className="fixed inset-0 z-50 flex items-center justify-center p-4 pointer-events-none">
-        <div 
-          className="bg-white rounded-2xl shadow-2xl w-full max-w-2xl max-h-[80vh] flex flex-col pointer-events-auto"
-          onClick={e => e.stopPropagation()}
-        >
-          {/* Header */}
-          <div className="px-6 py-4 border-b border-gray-200 flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ backgroundColor: colors.aiLight }}>
-                <Upload size={20} style={{ color: colors.ai }} />
-              </div>
-              <div>
-                <h2 className="font-bold text-gray-800 text-lg">Importer des données</h2>
-                <p className="text-sm text-gray-500">Collez le contenu de mock-properties-data.js ou un tableau JSON</p>
-              </div>
-            </div>
-            <button
-              onClick={handleClose}
-              className="w-8 h-8 rounded-lg hover:bg-gray-100 flex items-center justify-center text-gray-400 hover:text-gray-600 transition-colors"
+    <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
+      <div className="bg-white rounded-2xl w-full max-w-md p-6 relative">
+        <button onClick={onClose} className="absolute top-4 right-4 text-gray-400 hover:text-gray-600">
+          <X size={20} />
+        </button>
+        
+        <h2 className="text-xl font-bold text-gray-800 mb-6">{t('import.title')}</h2>
+
+        {step === 0 && (
+          <div className="space-y-4">
+            <div 
+              className="border-2 border-dashed border-gray-200 rounded-xl p-8 text-center hover:border-blue-500 hover:bg-blue-50 transition-all cursor-pointer"
+              onClick={() => setStep(1)} // Simulating file select
             >
-              <X size={20} />
+              <div className="w-12 h-12 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center mx-auto mb-3">
+                <Upload size={24} />
+              </div>
+              <p className="text-gray-900 font-medium mb-1">{t('import.drag_drop')}</p>
+              <p className="text-sm text-gray-500">ou <span className="text-blue-600 underline">{t('import.browse')}</span></p>
+            </div>
+            <p className="text-xs text-center text-gray-400">{t('import.supported_formats')}</p>
+          </div>
+        )}
+
+        {step === 1 && (
+          <div className="space-y-4">
+            <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-xl border border-gray-200">
+              <FileText size={20} className="text-gray-500" />
+              <div className="flex-1 min-w-0">
+                <p className="font-medium text-sm truncate">export_immo_v2.csv</p>
+                <p className="text-xs text-gray-400">2.4 MB</p>
+              </div>
+              <CheckCircle2 size={18} className="text-green-500" />
+            </div>
+            
+            <div className="space-y-2">
+              {[t('import.step_1'), t('import.step_2'), t('import.step_3')].map((label, i) => (
+                <div key={i} className="flex items-center gap-3">
+                  <div className={`w-2 h-2 rounded-full ${i === 0 ? 'bg-blue-500 animate-pulse' : 'bg-gray-200'}`} />
+                  <span className={`text-sm ${i === 0 ? 'text-blue-600 font-medium' : 'text-gray-400'}`}>{label}</span>
+                </div>
+              ))}
+            </div>
+
+            <button 
+              onClick={handleImport}
+              className="w-full py-3 bg-blue-600 text-white rounded-xl font-semibold hover:bg-blue-700 transition-colors"
+            >
+              {t('import.import_btn')}
             </button>
           </div>
-
-          {/* Content */}
-          <div className="flex-1 p-6 overflow-hidden flex flex-col">
-            <textarea
-              value={importText}
-              onChange={(e) => setImportText(e.target.value)}
-              placeholder={`Collez le contenu du fichier mock-properties-data.js ou un tableau JSON.
-
-Formats acceptés:
-• Fichier JS complet avec export const MOCK_PROPERTIES = [...]
-• Tableau JSON simple: [{ "id": "BU-001", ... }]
-
-Les dates (new Date('...')) seront automatiquement converties.`}
-              className="flex-1 w-full p-4 border border-gray-200 rounded-xl font-mono text-sm resize-none focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
-              style={{ minHeight: '300px' }}
-            />
-            
-            {/* Error message */}
-            {error && (
-              <div className="mt-4 p-4 bg-red-50 border border-red-200 rounded-xl">
-                <div className="flex items-start gap-3">
-                  <XCircle size={20} className="text-red-500 flex-shrink-0 mt-0.5" />
-                  <pre className="text-sm text-red-700 whitespace-pre-wrap font-sans">{error}</pre>
-                </div>
-              </div>
-            )}
-          </div>
-
-          {/* Footer */}
-          <div className="px-6 py-4 border-t border-gray-200 flex items-center justify-between">
-            <p className="text-xs text-gray-500">
-              Les données importées remplaceront les données existantes
-            </p>
-            <div className="flex gap-3">
-              <button
-                onClick={handleClose}
-                className="px-4 py-2 text-sm font-medium text-gray-600 hover:bg-gray-100 rounded-lg transition-colors"
-              >
-                Annuler
-              </button>
-              <button
-                onClick={handleImport}
-                className="px-4 py-2 text-sm font-medium text-white rounded-lg transition-colors flex items-center gap-2"
-                style={{ backgroundColor: colors.ai }}
-              >
-                <Upload size={16} />
-                Importer
-              </button>
-            </div>
-          </div>
-        </div>
+        )}
+        
+        {step === 2 && (
+             <div className="text-center py-8">
+               <RefreshCw size={48} className="animate-spin text-blue-500 mx-auto mb-4" />
+               <p className="text-gray-600 font-medium">{t('import.step_3')}</p>
+             </div>
+        )}
       </div>
-    </>
+    </div>
   );
 };
 
 // ==================== MAIN APPLICATION ====================
 const ProspecteurAugmenteV2 = () => {
+  const { t, i18n } = useTranslation();
   const [selectedPropertyId, setSelectedPropertyId] = useState(null);
   const [isPanelOpen, setIsPanelOpen] = useState(false);
   const [filters, setFilters] = useState({ types: [], statuses: [], communes: [] });
@@ -1177,13 +1063,14 @@ const ProspecteurAugmenteV2 = () => {
     setIsPanelOpen(true);
   };
 
-  const handleGenerateRoute = async () => {
+  const generateRoute = async () => {
     setIsGeneratingRoute(true);
-    addToast({ type: 'info', title: 'Calcul de l\'itinéraire', message: 'Optimisation en cours...' });
+    addToast({ type: 'info', title: t('toasts.route_calculating'), message: t('toasts.route_optimizing') });
     await new Promise(r => setTimeout(r, 1500));
-    setRoute(filteredProperties.slice(0, 4));
+    const sorted = [...filteredProperties].sort((a, b) => a.address.lat - b.address.lat).slice(0, 4);
+    setRoute(sorted);
     setIsGeneratingRoute(false);
-    addToast({ type: 'success', title: 'Itinéraire généré', message: `${Math.min(4, filteredProperties.length)} étapes optimisées` });
+    addToast({ type: 'success', title: t('toasts.route_optimized'), message: t('toasts.route_stops', { count: sorted.length }) });
   };
 
   const toggleOffline = () => {
@@ -1216,8 +1103,8 @@ const ProspecteurAugmenteV2 = () => {
               <Building2 size={20} className="text-white" />
             </div>
             <div>
-              <h1 className="text-white font-bold text-lg leading-tight">Prospecteur Augmenté</h1>
-              <p className="text-white/60 text-xs">CityDev • Inventimmo</p>
+              <h1 className="text-white font-bold text-lg leading-tight">{t('header.title')}</h1>
+              <p className="text-white/60 text-xs">{t('header.subtitle')}</p>
             </div>
           </div>
         </div>
@@ -1227,10 +1114,10 @@ const ProspecteurAugmenteV2 = () => {
           <button
             onClick={() => setIsImportModalOpen(true)}
             className="px-3 py-1.5 bg-white/10 hover:bg-white/20 rounded-lg text-white text-xs font-medium transition-colors flex items-center gap-2"
-            title="Importer des données"
+            title={t('header.import')}
           >
             <Settings size={14} />
-            Importer
+            {t('header.import')}
           </button>
 
           {/* Demo toggle */}
@@ -1238,15 +1125,25 @@ const ProspecteurAugmenteV2 = () => {
             onClick={toggleOffline}
             className="px-3 py-1.5 bg-white/10 hover:bg-white/20 rounded-lg text-white text-xs font-medium transition-colors"
           >
-            {connectivity.isOnline ? '🔴 Simuler hors ligne' : '🔶 Revenir en ligne'}
+            {connectivity.isOnline ? `🔴 ${t('header.simulate_offline')}` : `🔶 ${t('header.back_online')}`}
           </button>
 
           <ConnectionStatus isOnline={connectivity.isOnline} />
           <SyncStatus status={syncStatus.status} pendingCount={syncStatus.pendingCount} onClick={() => {}} />
           
           <div className="flex bg-white/10 rounded-lg overflow-hidden">
-            <button className="px-3 py-1.5 text-white text-xs font-bold bg-white/20">FR</button>
-            <button className="px-3 py-1.5 text-white/60 text-xs font-bold hover:bg-white/10">NL</button>
+            <button 
+              onClick={() => i18n.changeLanguage('fr')} 
+              className={`px-3 py-1.5 text-xs font-bold transition-colors ${i18n.language === 'fr' ? 'bg-white/20 text-white' : 'text-white/60 hover:bg-white/10'}`}
+            >
+              FR
+            </button>
+            <button 
+              onClick={() => i18n.changeLanguage('nl')} 
+              className={`px-3 py-1.5 text-xs font-bold transition-colors ${i18n.language === 'nl' ? 'bg-white/20 text-white' : 'text-white/60 hover:bg-white/10'}`}
+            >
+              NL
+            </button>
           </div>
 
           <div className="w-9 h-9 rounded-full bg-white/20 flex items-center justify-center text-white text-sm font-bold">
@@ -1268,15 +1165,14 @@ const ProspecteurAugmenteV2 = () => {
           <RoutePanel
             route={route}
             onClear={() => setRoute(null)}
-            onGenerate={handleGenerateRoute}
-            isGenerating={isGeneratingRoute}
-            canGenerate={filteredProperties.length > 0}
+            generateRoute={generateRoute}
+            isOptimizing={isGeneratingRoute}
           />
 
           {/* Property List */}
           <div className="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
             <div className="px-4 py-3 border-b border-gray-100">
-              <h3 className="font-medium text-gray-800">Biens filtrés</h3>
+              <h3 className="font-medium text-gray-800">{t('filters.filtered_list')}</h3>
             </div>
             <div className="divide-y divide-gray-100 max-h-[400px] overflow-y-auto">
               {filteredProperties.map(prop => {
@@ -1319,7 +1215,7 @@ const ProspecteurAugmenteV2 = () => {
 
         {/* Map Area */}
         <div className="flex-1 relative">
-          <MapView
+          <MapComponent
             properties={filteredProperties}
             selectedId={selectedPropertyId}
             onSelectProperty={handleSelectProperty}

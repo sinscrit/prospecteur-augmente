@@ -1,0 +1,126 @@
+{
+  "header": {
+    "title": "Prospecteur Augmenté",
+    "subtitle": "CityDev • Inventimmo",
+    "import": "Importer",
+    "simulate_offline": "Simuler hors ligne",
+    "back_online": "Revenir en ligne"
+  },
+  "filters": {
+    "title": "Filtres",
+    "property_type": "Type de bien",
+    "status": "Statut",
+    "reset": "Réinitialiser",
+    "properties_count": "{{count}} biens",
+    "properties_count_one": "{{count}} bien",
+    "filtered_list": "Biens filtrés"
+  },
+  "types": {
+    "bureau": "Bureau",
+    "entrepot": "Entrepôt",
+    "commerce": "Commerce",
+    "terrain": "Terrain",
+    "atelier": "Atelier"
+  },
+  "status": {
+    "complet": "Complet",
+    "to_revise": "À réviser",
+    "to_revise_2m": "À réviser (2m)",
+    "to_contact": "À contacter",
+    "suspended": "En suspens",
+    "rented_sold": "Loué/Vendu",
+    "contact_refused": "Contact refusé"
+  },
+  "common": {
+      "online": "ONLINE",
+      "offline": "HORS LIGNE",
+      "synced": "Synchronisé",
+      "syncing": "Synchronisation...",
+      "pending": "{{count}} en attente",
+      "sync_error": "Erreur synchro",
+      "unsaved": "Non enregistré",
+      "save": "Enregistrer",
+      "saving": "Enregistrement...",
+      "publish": "Publier",
+      "cancel": "Annuler",
+      "completeness": "Complétude"
+  },
+  "panel": {
+    "tabs": {
+        "info": "Informations",
+        "photos": "Photos",
+        "contact": "Contact"
+    },
+    "details": {
+        "title": "Détails du bien",
+        "type": "Type",
+        "transaction": "Transaction",
+        "surface": "Surface (m²)",
+        "price": "Prix (€)",
+        "location": "Location",
+        "sale": "Vente"
+    },
+    "characteristics": {
+        "title": "Caractéristiques"
+    },
+    "ai": {
+        "title": "Description IA",
+        "generated": "✓ Générée",
+        "generate_btn": "Générer avec l'IA",
+        "generating": "Génération en cours...",
+        "fr_label": "Français",
+        "nl_label": "Nederlands"
+    },
+    "photos": {
+        "auto_rotate": "Auto-rotate",
+        "click_add": "Cliquez pour ajouter",
+        "drag_drop": "ou glissez-déposez",
+        "format_info": "PNG, JPG jusqu'à 10MB"
+    },
+    "contact": {
+        "name": "Nom",
+        "phone": "Téléphone",
+        "no_contact": "Aucun contact associé",
+        "add_btn": "+ Ajouter un contact"
+    }
+  },
+  "route": {
+    "title": "Itinéraire",
+    "generate_btn": "Générer Itinéraire",
+    "calculating": "Calcul en cours...",
+    "optimize_btn": "Optimiser",
+    "steps": "{{count}} étapes",
+    "km": "km",
+    "min": "min"
+  },
+  "import": {
+    "title": "Importer des données",
+    "drag_drop": "Glissez votre fichier ici",
+    "browse": "parcourir",
+    "supported_formats": "Formats supportés: CSV, Excel, XML",
+    "cancel": "Annuler",
+    "import_btn": "Importer",
+    "step_1": "Chargement...",
+    "step_2": "Analyse...",
+    "step_3": "Importation..."
+  },
+  "toasts": {
+    "saved_online": "Modifications enregistrées",
+    "synced_success": "Synchronisation réussie",
+    "saved_local": "Sauvegardé localement",
+    "sync_pending": "Sera synchronisé une fois en ligne",
+    "ai_generating": "Génération IA en cours",
+    "ai_creating": "Création de la description...",
+    "ai_success": "Description générée !",
+    "ai_created": "FR & NL créées avec succès",
+    "photo_detected": "Photo détectée",
+    "photo_rotating": "Auto-rotation appliquée ↻",
+    "photo_processing": "Traitement en cours...",
+    "photo_added": "Photo ajoutée",
+    "photo_reorder": "Glissez pour réorganiser",
+    "import_success": "Importation réussie",
+    "properties_added": "{{count}} biens ajoutés",
+    "route_optimized": "Itinéraire optimisé",
+    "route_stops": "{{count}} arrêts calculés"
+  }
+}

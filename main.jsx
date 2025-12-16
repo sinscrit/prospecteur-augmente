@@ -1,6 +1,7 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
 import ProspecteurAugmenteV2 from './prospecteur-augmente-v2'
+import './src/i18n'
 import './index.css'
 
 ReactDOM.createRoot(document.getElementById('root')).render(

@@ -1,0 +1,126 @@
+{
+  "header": {
+    "title": "Prospecteur Augmenté",
+    "subtitle": "CityDev • Inventimmo",
+    "import": "Importeren",
+    "simulate_offline": "Offline simuleren",
+    "back_online": "Online gaan"
+  },
+  "filters": {
+    "title": "Filters",
+    "property_type": "Type pand",
+    "status": "Status",
+    "reset": "Resetten",
+    "properties_count": "{{count}} panden",
+    "properties_count_one": "{{count}} pand",
+    "filtered_list": "Gefilterde panden"
+  },
+  "types": {
+    "bureau": "Kantoor",
+    "entrepot": "Magazijn",
+    "commerce": "Handelspand",
+    "terrain": "Grond",
+    "atelier": "Atelier"
+  },
+  "status": {
+    "complet": "Volledig",
+    "to_revise": "Te herzien",
+    "to_revise_2m": "Te herzien (2m)",
+    "to_contact": "Te contacteren",
+    "suspended": "In wacht",
+    "rented_sold": "Verhuurd/Verkocht",
+    "contact_refused": "Contact geweigerd"
+  },
+  "common": {
+      "online": "ONLINE",
+      "offline": "OFFLINE",
+      "synced": "Gesynchroniseerd",
+      "syncing": "Synchroniseren...",
+      "pending": "{{count}} wachtend",
+      "sync_error": "Sync fout",
+      "unsaved": "Niet opgeslagen",
+      "save": "Opslaan",
+      "saving": "Opslaan...",
+      "publish": "Publiceren",
+      "cancel": "Annuleren",
+      "completeness": "Volledigheid"
+  },
+  "panel": {
+    "tabs": {
+        "info": "Informatie",
+        "photos": "Fotos",
+        "contact": "Contact"
+    },
+    "details": {
+        "title": "Pand details",
+        "type": "Type",
+        "transaction": "Transactie",
+        "surface": "Oppervlakte (m²)",
+        "price": "Prijs (€)",
+        "location": "Verhuur",
+        "sale": "Verkoop"
+    },
+    "characteristics": {
+        "title": "Kenmerken"
+    },
+    "ai": {
+        "title": "AI Beschrijving",
+        "generated": "✓ Gegenereerd",
+        "generate_btn": "Genereren met AI",
+        "generating": "Genereren...",
+        "fr_label": "Frans",
+        "nl_label": "Nederlands"
+    },
+    "photos": {
+        "auto_rotate": "Auto-rotate",
+        "click_add": "Klik om toe te voegen",
+        "drag_drop": "of sleep hierheen",
+        "format_info": "PNG, JPG tot 10MB"
+    },
+    "contact": {
+        "name": "Naam",
+        "phone": "Telefoon",
+        "no_contact": "Geen contact gekoppeld",
+        "add_btn": "+ Contact toevoegen"
+    }
+  },
+  "route": {
+    "title": "Route",
+    "generate_btn": "Route genereren",
+    "calculating": "Berekenen...",
+    "optimize_btn": "Optimaliseren",
+    "steps": "{{count}} stops",
+    "km": "km",
+    "min": "min"
+  },
+  "import": {
+    "title": "Gegevens importeren",
+    "drag_drop": "Sleep uw bestand hierheen",
+    "browse": "bladeren",
+    "supported_formats": "Ondersteunde formaten: CSV, Excel, XML",
+    "cancel": "Annuleren",
+    "import_btn": "Importeren",
+    "step_1": "Laden...",
+    "step_2": "Analyseren...",
+    "step_3": "Importeren..."
+  },
+  "toasts": {
+    "saved_online": "Wijzigingen opgeslagen",
+    "synced_success": "Synchronisatie geslaagd",
+    "saved_local": "Lokaal opgeslagen",
+    "sync_pending": "Wordt online gesynchroniseerd",
+    "ai_generating": "AI generatie bezig",
+    "ai_creating": "Beschrijving maken...",
+    "ai_success": "Beschrijving gegenereerd!",
+    "ai_created": "FR & NL succesvol aangemaakt",
+    "photo_detected": "Foto gedetecteerd",
+    "photo_rotating": "Auto-rotatie toegepast ↻",
+    "photo_processing": "Verwerken...",
+    "photo_added": "Foto toegevoegd",
+    "photo_reorder": "Sleep om te ordenen",
+    "import_success": "Import geslaagd",
+    "properties_added": "{{count}} panden toegevoegd",
+    "route_optimized": "Route geoptimaliseerd",
+    "route_stops": "{{count}} stops berekend"
+  }
+}
